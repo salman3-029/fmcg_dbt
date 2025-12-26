@@ -1,6 +1,46 @@
 version: 2
 
 models:
+
+  - name: stg_products
+    description: "Staging model for products with cleaned names, categories, and standardized divisions."
+    columns:
+      - name: product_code
+        description: "SHA256 hash of the cleaned product name. Primary Key."
+        tests:
+          - unique
+          - not_null
+
+      - name: product_id
+        description: "Original numeric ID or 999999 if invalid."
+        tests:
+          - not_null
+          # Verify the regex cleaning logic worked (all IDs must be numbers)
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "^[0-9]+$"
+
+      - name: division
+        description: "Standardized product division based on category."
+        tests:
+          - not_null
+          - accepted_values:
+              values: 
+                - 'Nutrition Bars'
+                - 'Breakfast Foods'
+                - 'Dairy & Recovery'
+                - 'Healthy Snacks'
+                - 'Hydration & Electrolytes'
+                - 'Other'
+
+      - name: category
+        description: "Cleaned category name (Title Case, typo fixed)."
+        tests:
+          - not_null
+      
+      - name: variant
+        description: "extracted weight/quantity from product name"
+        tests:
+          - not_null
   - name: stg_customers
     columns:
       - name: customer_code

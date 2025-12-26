@@ -6,4 +6,5 @@ sources:
     schema: bronze
     tables:
       - name: customers
+      - name: products
 
