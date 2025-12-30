@@ -7,4 +7,5 @@ sources:
     tables:
       - name: customers
       - name: products
+      - name: gross_price
 

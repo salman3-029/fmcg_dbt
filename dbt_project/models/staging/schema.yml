@@ -41,6 +41,17 @@ models:
         description: "extracted weight/quantity from product name"
         tests:
           - not_null
+
+  - name: stg_gross_price
+    columns:
+      - name: month
+        tests:
+          - not_null # Ensures COALESCE found a valid date format
+      - name: gross_price
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0" # Ensures ABS() and cleanup worked
   - name: stg_customers
     columns:
       - name: customer_code
