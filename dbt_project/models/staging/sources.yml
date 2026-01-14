@@ -8,4 +8,5 @@ sources:
       - name: customers
       - name: products
       - name: gross_price
+      - name: orders
 
