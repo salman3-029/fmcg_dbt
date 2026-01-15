@@ -6,30 +6,22 @@
 
 with orders_stg as (
     select 
-        order_placement_date as date,
+        date_trunc('MM', order_placement_date) as date,
         customer_id as customer_code,
-        product_id,
-        order_qty as sold_quantity
+        product_code,
+        sum(order_qty) as sold_quantity
     from {{ ref('stg_orders') }}
+    group by 1,2,3
+
     -- Removed incremental filter: processing full staging table for merge
 ),
-
-products_stg as (
-    select 
-        product_id, 
-        product_code 
-    from {{ ref('stg_products') }}
-),
-
 transformed_orders as (
     select 
         o.date,
-        p.product_code,
+        o.product_code,
         o.customer_code,
         o.sold_quantity
     from orders_stg o
-    inner join products_stg p 
-        on o.product_id = p.product_id
 ),
 
 final_source as (
